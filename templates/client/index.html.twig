@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestion des Clients</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+    <!-- Header -->
+    <header class="bg-blue-600 text-white p-4">
+        <h1 class="text-xl">GESTION BOUTIQUE</h1>
+    </header>
+
+    <!-- Sidebar -->
+    <div class="flex">
+        <aside class="w-1/4 bg-gray-800 text-white p-4">
+            <ul>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dashboard</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dettes</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Clients</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Articles</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Demandes</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Utilisateurs</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <div class="bg-white p-4 rounded shadow-md">
+                <h2 class="text-lg font-bold mb-4">Lister Clients</h2>
+                <div class="mb-4">
+                    <input type="text" placeholder="Filter par Telep" class="p-2 border border-gray-300 rounded mr-2">
+                    <button class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+                </div>
+
+                <table class="w-full bg-white shadow-md rounded">
+                    <thead class="bg-gray-200">
+                        <tr>
+                            <th class="p-2 text-left">PRENOM ET NOM</th>
+                            <th class="p-2 text-left">TELEPHONE</th>
+                            <th class="p-2 text-left">ADRESSE</th>
+                            <th class="p-2 text-left">MONTANT DUE</th>
+                            <th class="p-2 text-left">ACTION</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr class="border-b">
+                            <td class="p-2">Ibrahima Diallo</td>
+                            <td class="p-2">785619115</td>
+                            <td class="p-2">Dakar, Senegal</td>
+                            <td class="p-2">5000 FCFA</td>
+                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Détails</button></td>
+                        </tr>
+                        <tr class="bg-gray-100 border-b">
+                            <td class="p-2">Amina Ndiaye</td>
+                            <td class="p-2">785619115</td>
+                            <td class="p-2">Thiès, Senegal</td>
+                            <td class="p-2">15,000 FCFA</td>
+                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Détails</button></td>
+                        </tr>
+                        <tr class="border-b">
+                            <td class="p-2">Moussa Fall</td>
+                            <td class="p-2">785619115</td>
+                            <td class="p-2">Saint-Louis, Senegal</td>
+                            <td class="p-2">10,000 FCFA</td>
+                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Détails</button></td>
+                        </tr>
+                        <tr class="bg-gray-100">
+                            <td class="p-2">Fatou Diop</td>
+                            <td class="p-2">785619115</td>
+                            <td class="p-2">Kaolack, Senegal</td>
+                            <td class="p-2">10,000 FCFA</td>
+                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Détails</button></td>
+                        </tr>
+                    </tbody>
+                </table>
+
+                <!-- Pagination -->
+                <div class="flex justify-end mt-4">
+                    <button class="bg-gray-200 text-black px-3 py-1 rounded mr-2">&lt;</button>
+                    <button class="bg-gray-800 text-white px-3 py-1 rounded">1</button>
+                    <button class="bg-gray-200 text-black px-3 py-1 rounded">2</button>
+                    <button class="bg-gray-200 text-black px-3 py-1 rounded ml-2">&gt;</button>
+                </div>
+            </div>
+        </main>
+    </div>
+</body>
+</html>
