@@ -1,0 +1,27 @@
+{% extends "base.html.twig" %}
+
+{% block main %}
+    <!-- Sidebar -->
+
+    <div class="flex">
+        <aside class="w-1/4 bg-gray-800 text-white p-4">
+            <ul>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dashboard</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dettes</a></li>
+                <li class="mb-4"><a href="{{path('clients.index')}}" class="block p-2 hover:bg-gray-700">Clients</a></li>
+                <li class="mb-4"><a href="{{path('articles.index')}}" class="block p-2 hover:bg-gray-700">Articles</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Demandes</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Utilisateurs</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="w-3/4 bg-white p-4 rounded shadow-md">
+            <h2 class="text-lg font-bold mb-4">Enrgistrement d'un Client </h2>
+
+        
+
+
+        </div>
+    </div>
+{% endblock %}

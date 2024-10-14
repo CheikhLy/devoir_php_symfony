@@ -1,0 +1,33 @@
+{% block form_start %}
+    <form {{ block('form_attributes') }} class="space-y-6">
+{% endblock %}
+
+{% block form_row %}
+    <div class="mb-4">
+        {{ form_label(form) }}
+        {{ form_widget(form, {'attr': {'class': 'mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm'}}) }}
+        {{ form_errors(form) }}
+    </div>
+{% endblock %}
+
+{% block form_label %}
+    {% if label is not same as(false) %}
+        <label {{ block('widget_attributes') }} class="block text-sm font-medium text-gray-700">
+            {{ label|default('')|trans({}, translation_domain) }}
+        </label>
+    {% endif %}
+{% endblock %}
+
+{% block form_errors %}
+    {% if errors|length > 0 %}
+        <div class="text-red-600 text-sm mt-1">
+            {% for error in errors %}
+                <p>{{ error.message }}</p>
+            {% endfor %}
+        </div>
+    {% endif %}
+{% endblock %}
+
+{% block form_widget_simple %}
+    <input type="{{ type }}" {{ block('widget_attributes') }} value="{{ value }}" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm">
+{% endblock %}
