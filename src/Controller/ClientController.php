@@ -4,6 +4,10 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
+use App\Form\SearchClientType;
+//  use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+//  use App\Form\SearchClientType;
+
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\ClientRepository;
@@ -14,10 +18,11 @@ use Doctrine\ORM\EntityManagerInterface;
 class ClientController extends AbstractController
 {
     /**
-     * @Route("/clients", name="clients.index", methods={"GET"})
+     * @Route("/clients", name="clients.index", methods={"GET","POST"})
      */
     public function index(ClientRepository $clientRepository,Request $request): Response
     {
+        $formSearch = $this->createForm(SearchClientType::class);
         $page = (int) $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
         $limit = 10; // Nombre d'éléments par page
     
@@ -34,6 +39,7 @@ class ClientController extends AbstractController
             'datas' => $clients,
             'currentPage' => $page,
             'totalPages' => $totalPages,
+            'formSearch' => $formSearch->createView()
         ]);
     
     }
@@ -45,7 +51,7 @@ class ClientController extends AbstractController
         $client = new Client(); // Création d'un nouvel objet Client
         
         
-         $form = $this->createForm(ClientType::class, $client); // Création du formulaire pour le client
+         $form = $this->createForm(ClientType::class, $client); // Création du formulaire pour le clientss
 
         $form->handleRequest($request); // Lancement de la requête HTTP et analyse des données envoyées par le client
 

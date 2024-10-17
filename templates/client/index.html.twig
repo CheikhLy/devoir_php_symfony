@@ -18,10 +18,15 @@
 
             <!-- Section de filtre -->
             <div class="mb-4">
-                <form action="{{ path('clients.search') }}" method="get">
+                {# <form action="{{ path('clients.search') }}" method="get">
                     <input type="text" name="tel" placeholder="Filtrer par Téléphone" class="p-2 border border-gray-300 rounded mr-2">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
                 </form>
+                <form action="" method="get">
+                 <a href="{{path('clients.store')}}"   <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Nouveau</button></a>
+                </form> #}
+                
+                {{form(formSearch)}}
                 
             </div>
 

@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: ClientRepository::class)]
+#[UniqueEntity('telephon',message: 'Le telephone doit etre unique.')]
+#[UniqueEntity('surname',message: 'Le nom doit etre unique.')]
+#[UniqueEntity('address',message: 'L\'adresse doit etre unique.')]
 class Client
 {
     #[ORM\Id]
@@ -21,7 +24,7 @@ class Client
     private $surname;
 
     #[ORM\Column(type: 'string', length: 100)]
-    #[Assert\NotBlank(message: 'L\'adresse est obligatoire.')]
+    #[Assert\NotBlank(message: 'Le telephone est obligatoire.')]
     private $telephon;
 
     #[ORM\Column(type: 'string', length: 100)]
