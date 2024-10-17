@@ -26,7 +26,17 @@
                  <a href="{{path('clients.store')}}"   <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Nouveau</button></a>
                 </form> #}
                 
-                {{form(formSearch)}}
+                {{form_start(formSearch)}}
+                <div class='mb- 2 text-danger'>
+                      {{form_errors(formSearch.telephon)}}
+                </div>
+                <div class='d-flex my-2 my-lg-0 col-5'>
+                        {{form_widget(formSearch.telephon, {'attr':{
+                            'class':'p-2 border border-gray-300 rounded mr-2'
+                        }})}}
+                        {{form_widget(formSearch.Search)}}
+                </div>
+                  {{form_end(formSearch)}}
                 
             </div>
 

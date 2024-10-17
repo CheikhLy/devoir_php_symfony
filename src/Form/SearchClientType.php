@@ -28,10 +28,9 @@ class SearchClientType extends AbstractType
                 new NotBlank([
                     'message' => 'Saisissez votre numéro de telephone',
                 ]),
-                new NotBlank([
-                    'message' => 'Le champ ne peut pas être vide',
-                ]),
-                new Regex(['/^([77|78|76])([0-9]{7})$/'])
+                new Regex([
+                    'pattern'=> '/^([77|78|76])([0-9]{7})$/'
+                ])
             ]
         ]) 
         ->add('Search',SubmitType::class,[

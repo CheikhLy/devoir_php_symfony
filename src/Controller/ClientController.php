@@ -22,12 +22,21 @@ class ClientController extends AbstractController
      */
     public function index(ClientRepository $clientRepository,Request $request): Response
     {
+
         $formSearch = $this->createForm(SearchClientType::class);
+        $formSearch->handleRequest($request);
+        if ($formSearch->isSubmitted($request) && $formSearch->isValid()) {
+         
+            $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
+         
+        }else {
+            // Récupérer tous les clients
+            $clients = $clientRepository->findAll();
+        }
         $page = (int) $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
-        $limit = 10; // Nombre d'éléments par page
+        $limit = 4; // Nombre d'éléments par page
     
-        // Récupérer tous les clients
-        $clients = $clientRepository->findAll();
+ 
         $totalClients = count($clients);
         $totalPages = ceil($totalClients / $limit);
     
