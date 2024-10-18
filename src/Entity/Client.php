@@ -40,12 +40,14 @@ class Client
     #[ORM\OneToOne(inversedBy: 'client', targetEntity: User::class, cascade: ['persist', 'remove'])]
     private $users;
 
-    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Dette::class, orphanRemoval: true)]
+    #[ORM\OneToMany(mappedBy: 'client', targetEntity: Dette::class, orphanRemoval: true,cascade: ['persist'])]
     private $dettes;
 
     public function __construct()
     {
         $this->dettes = new ArrayCollection();
+        $this->createAt = new \DateTimeImmutable();
+        $this->updateAt = new \DateTimeImmutable();
     }
 
     public function getId(): ?int

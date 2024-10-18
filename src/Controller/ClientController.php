@@ -23,35 +23,64 @@ class ClientController extends AbstractController
     public function index(ClientRepository $clientRepository,Request $request): Response
     {
 
-        $formSearch = $this->createForm(SearchClientType::class);
-        $formSearch->handleRequest($request);
-        if ($formSearch->isSubmitted($request) && $formSearch->isValid()) {
+        // $formSearch = $this->createForm(SearchClientType::class);
+        // $formSearch->handleRequest($request);
+        // $formSearch->addEventSubscriber(new SearchClientSubscriber());
+        // if ($formSearch->isSubmitted($request) && $formSearch->isValid()) {
          
-            $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
+        //     $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
          
-        }else {
-            // Récupérer tous les clients
-            $clients = $clientRepository->findAll();
-        }
-        $page = (int) $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
-        $limit = 4; // Nombre d'éléments par page
+        // }else {
+        //     // Récupérer tous les clients
+        //     $clients = $clientRepository->findAll();
+        // }
+        // $page = (int) $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
+        // $limit = 4; // Nombre d'éléments par page
     
  
+        // $totalClients = count($clients);
+        // $totalPages = ceil($totalClients / $limit);
+    
+        // // Récupérer les clients pour la page actuelle
+        // $offset = ($page - 1) * $limit;
+        // $clients = array_slice($clients, $offset, $limit);
+    
+        // return $this->render('client/index.html.twig', [
+        //     'datas' => $clients,
+        //     'currentPage' => $page,
+        //     'totalPages' => $totalPages,
+        //     'formSearch' => $formSearch->createView()
+        // ]);
+        $formSearch = $this->createForm(SearchClientType::class);
+        $formSearch->handleRequest($request);
+
+        if ($formSearch->isSubmitted() && $formSearch->isValid()) {
+            // Si le formulaire est soumis et valide, on cherche les clients avec le téléphone
+            $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
+        } else {
+            // Sinon, on récupère tous les clients
+            $clients = $clientRepository->findAll();
+        }
+
+        $page = (int)$request->query->get('page', 1); // Page actuelle, par défaut 1
+        $limit = 4; // Nombre d'éléments par page
+
         $totalClients = count($clients);
         $totalPages = ceil($totalClients / $limit);
-    
+
         // Récupérer les clients pour la page actuelle
         $offset = ($page - 1) * $limit;
         $clients = array_slice($clients, $offset, $limit);
-    
+
         return $this->render('client/index.html.twig', [
             'datas' => $clients,
             'currentPage' => $page,
             'totalPages' => $totalPages,
-            'formSearch' => $formSearch->createView()
+            'formSearch' => $formSearch->createView(),
         ]);
-    
     }
+    
+    
     /**
      * @Route("/clients/store", name="clients.store", methods={"GET", "POST"})
      */
@@ -82,16 +111,37 @@ class ClientController extends AbstractController
     
         //utilisation des path variables
 
-        /**
-     * @Route("/clients/show/{id?}", name="clients.show", methods={"GET"})
-     */
-    public function show(int $id): Response
-    {
-        dd($id);
-        return $this->render('client/index.html.twig', [
-            'controller_name' => 'ClientController',
-        ]);
+   /**
+ * @Route("/clients/show/{id}", name="clients.show", methods={"GET"})
+ */
+public function show(int $id, ClientRepository $clientRepository): Response
+{
+    // Récupérer le client par son ID
+    $client = $clientRepository->find($id);
+
+    if (!$client) {
+        throw $this->createNotFoundException('Client non trouvé');
     }
+
+    // Filtrer les dettes soldées et non soldées
+    $dettesSoldees = [];
+    $dettesNonSoldees = [];
+
+    foreach ($client->getDettes() as $dette) {
+        if ($dette->isSoldee()) {
+            $dettesSoldees[] = $dette;
+        } else {
+            $dettesNonSoldees[] = $dette;
+        }
+    }
+
+    return $this->render('client/show.html.twig', [
+        'client' => $client,
+        'dettesSoldees' => $dettesSoldees,
+        'dettesNonSoldees' => $dettesNonSoldees,
+    ]);
+}
+
     //utilisation des query parameters
     #[Route('/clients/search', name: 'clients.search')]
     

@@ -1,0 +1,19 @@
+<h1>Détails du client {{ client.surname }}</h1>
+
+<h2>Dettes soldées</h2>
+<ul>
+    {% for dette in dettesSoldees %}
+        <li>Montant: {{ dette.montant }} - Montant versé: {{ dette.montantVerser }}</li>
+    {% else %}
+        <li>Aucune dette soldée.</li>
+    {% endfor %}
+</ul>
+
+<h2>Dettes non soldées</h2>
+<ul>
+    {% for dette in dettesNonSoldees %}
+        <li>Montant: {{ dette.montant }} - Montant versé: {{ dette.montantVerser }}</li>
+    {% else %}
+        <li>Aucune dette non soldée.</li>
+    {% endfor %}
+</ul>

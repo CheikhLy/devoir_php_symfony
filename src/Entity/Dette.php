@@ -29,6 +29,17 @@ class Dette
     #[ORM\JoinColumn(nullable: false)]
     private $client;
 
+    public function __construct()
+    {
+        $this->creatAt = new \DateTimeImmutable();
+        $this->updateAt = new \DateTimeImmutable();
+        
+    }
+    public function isSoldee(): bool
+    {
+        return $this->getMontantVerser() >= $this->getMontant();
+    }
+
     public function getId(): ?int
     {
         return $this->id;
