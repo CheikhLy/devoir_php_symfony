@@ -1,0 +1,67 @@
+{% extends "base.html.twig" %}
+
+{% block main %}
+    <!-- Sidebar -->
+
+    <div class="flex">
+        <aside class="w-1/4 bg-gray-800 text-white p-4">
+            <ul>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dashboard</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dettes</a></li>
+                <li class="mb-4"><a href="{{path('clients.index')}}" class="block p-2 hover:bg-gray-700">Clients</a></li>
+                <li class="mb-4"><a href="{{path('articles.index')}}" class="block p-2 hover:bg-gray-700">Articles</a></li>
+                <li class="mb-4"><a href="{{path('dettes.index')}}" class="block p-2 hover:bg-gray-700">Dettes</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Utilisateurs</a></li>
+            </ul>
+        </aside>
+
+        <!-- Main Content -->
+        <div class="w-3/4 bg-white p-4 rounded shadow-md">
+            <h2 class="text-lg font-bold mb-4">Lister Dettes</h2>
+
+
+{% block title %}Liste des dettes{% endblock %}
+
+{% block body %}
+    <h1>Liste des dettes</h1>
+
+    {{ form_start(form) }}
+        {{ form_row(form.status) }}
+        <button type="submit">Filtrer</button>
+    {{ form_end(form) }}
+
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Montant</th>
+                <th>Montant versé</th>
+                <th>Client</th>
+                <th>Date de création</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for dette in dettes %}
+                <tr>
+                    <td>{{ dette.id }}</td>
+                    <td>{{ dette.montant }}</td>
+                    <td>{{ dette.montantVerser }}</td>
+                    <td>{{ dette.client.nom }}</td>
+                    <td>{{ dette.createAt|date('Y-m-d H:i') }}</td>
+                    <td>
+                        <a href="{{ path('dettes.show', {id: dette.id}) }}">Voir</a>
+                        <a href="{{ path('dettes.edit', {id: dette.id}) }}">Modifier</a>
+                        <a href="{{ path('dettes.delete', {id: dette.id}) }}">Supprimer</a>
+                    </td>
+                </tr>
+            {% else %}
+                <tr>
+                    <td colspan="6">Aucune dette trouvée.</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}
+    </div>
+{% endblock %}
