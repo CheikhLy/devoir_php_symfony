@@ -5,10 +5,13 @@ namespace App\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Response;
 use App\Form\SearchClientType;
-//  use Symfony\Component\Form\Extension\Core\Type\SubmitType;
-//  use App\Form\SearchClientType;
-
+use App\DTO\ClientSearchDto;
+use Doctrine\ORM\Tools\Pagination\Paginator;
+use App\Entity\Dette;
+use App\Form\DetteFiltrerType;
+use App\Repository\DetteRepository;
 use Symfony\Component\Routing\Annotation\Route;
+use App\enum\StatusDette;
 use Symfony\Component\HttpFoundation\Request;
 use App\Repository\ClientRepository;
 use App\Form\ClientType;
@@ -20,65 +23,61 @@ class ClientController extends AbstractController
     /**
      * @Route("/clients", name="clients.index", methods={"GET","POST"})
      */
-    public function index(ClientRepository $clientRepository,Request $request): Response
+    public function index(ClientRepository $clientRepository, Request $request): Response
     {
+        $clientSearchDto = new ClientSearchDto();
+        $formSearch = $this->createForm(SearchClientType::class, $clientSearchDto);
+        $formSearch->handleRequest($request);
+        $page = $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
+        $limit = 4; // Nombre d'éléments par page
+    
+        if ($formSearch->isSubmitted() && $formSearch->isValid()) {
+            // Recherche avec pagination
+            $clients = $clientRepository->findClientBy($clientSearchDto, $page, $limit);
+            $count = count($clients); // Utiliser count si findClientBy retourne un tableau
+        } else {
+            // Récupérer tous les clients avec pagination
+            $count = $clientRepository->countAllClients(); // Une méthode que vous devez définir dans le repository
+            $clients = $clientRepository->paginateClients($page, $limit);
+        }
 
-        // $formSearch = $this->createForm(SearchClientType::class);
+        $maxPage = ceil($count / $limit);
+    
+        return $this->render('client/index.html.twig', [
+            'datas' => $clients,
+            'page' => $page,
+            'maxPage' => $maxPage,
+            'formSearch' => $formSearch->createView(),
+        ]);
+    }
+            // $formSearch = $this->createForm(SearchClientType::class);
         // $formSearch->handleRequest($request);
-        // $formSearch->addEventSubscriber(new SearchClientSubscriber());
-        // if ($formSearch->isSubmitted($request) && $formSearch->isValid()) {
-         
+
+        // if ($formSearch->isSubmitted() && $formSearch->isValid()) {
+        //     // Si le formulaire est soumis et valide, on cherche les clients avec le téléphone
         //     $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
-         
-        // }else {
-        //     // Récupérer tous les clients
+        // } else {
+        //     // Sinon, on récupère tous les clients
         //     $clients = $clientRepository->findAll();
         // }
-        // $page = (int) $request->query->get('page', 1); // Récupérer la page actuelle, par défaut 1
+
+        // $page = (int)$request->query->get('page', 1); // Page actuelle, par défaut 1
         // $limit = 4; // Nombre d'éléments par page
-    
- 
+
         // $totalClients = count($clients);
         // $totalPages = ceil($totalClients / $limit);
-    
+
         // // Récupérer les clients pour la page actuelle
         // $offset = ($page - 1) * $limit;
         // $clients = array_slice($clients, $offset, $limit);
-    
+
         // return $this->render('client/index.html.twig', [
         //     'datas' => $clients,
         //     'currentPage' => $page,
         //     'totalPages' => $totalPages,
-        //     'formSearch' => $formSearch->createView()
+        //     'formSearch' => $formSearch->createView(),
         // ]);
-        $formSearch = $this->createForm(SearchClientType::class);
-        $formSearch->handleRequest($request);
-
-        if ($formSearch->isSubmitted() && $formSearch->isValid()) {
-            // Si le formulaire est soumis et valide, on cherche les clients avec le téléphone
-            $clients = $clientRepository->findBy(['telephon' => $formSearch->get('telephon')->getData()]);
-        } else {
-            // Sinon, on récupère tous les clients
-            $clients = $clientRepository->findAll();
-        }
-
-        $page = (int)$request->query->get('page', 1); // Page actuelle, par défaut 1
-        $limit = 4; // Nombre d'éléments par page
-
-        $totalClients = count($clients);
-        $totalPages = ceil($totalClients / $limit);
-
-        // Récupérer les clients pour la page actuelle
-        $offset = ($page - 1) * $limit;
-        $clients = array_slice($clients, $offset, $limit);
-
-        return $this->render('client/index.html.twig', [
-            'datas' => $clients,
-            'currentPage' => $page,
-            'totalPages' => $totalPages,
-            'formSearch' => $formSearch->createView(),
-        ]);
-    }
+    
     
     
     /**
@@ -112,33 +111,31 @@ class ClientController extends AbstractController
         //utilisation des path variables
 
    /**
- * @Route("/clients/show/{id}", name="clients.show", methods={"GET"})
+ * @Route("/clients/show/{idClient}", name="clients.show", methods={"GET", "POST"})
  */
-public function show(int $id, ClientRepository $clientRepository): Response
+public function show(int $idClient, ClientRepository $clientRepository, Request $request, DetteRepository $detteRepository): Response
 {
-    // Récupérer le client par son ID
-    $client = $clientRepository->find($id);
+    $limit = 1;
+    $page = $request->query->getInt('page', 1);
 
-    if (!$client) {
-        throw $this->createNotFoundException('Client non trouvé');
+    $formSearch = $this->createForm(DetteFiltrerType::class);
+    $formSearch->handleRequest($request);
+    $client = $clientRepository->find($idClient);
+    $status = $request->get("status", StatusDette::IMPAYE->value);
+    if ($request->query->has('dette_filtrer')) {
+        $status = $request->query->all('dette_filtrer')['status'];
     }
+    $dettes = $detteRepository->findDetteByClient($idClient, $status, $limit, $page);
 
-    // Filtrer les dettes soldées et non soldées
-    $dettesSoldees = [];
-    $dettesNonSoldees = [];
-
-    foreach ($client->getDettes() as $dette) {
-        if ($dette->isSoldee()) {
-            $dettesSoldees[] = $dette;
-        } else {
-            $dettesNonSoldees[] = $dette;
-        }
-    }
-
-    return $this->render('client/show.html.twig', [
+    $count = $dettes->count();
+    $maxPage = ceil($count / $limit);
+    return $this->render('client/dette.html.twig', [
+        'dettes' => $dettes,
         'client' => $client,
-        'dettesSoldees' => $dettesSoldees,
-        'dettesNonSoldees' => $dettesNonSoldees,
+        'status' => $status,
+        'formSearch' => $formSearch->createView(),
+        'page' => $page, // page actuelle
+        'maxPage' => $maxPage,
     ]);
 }
 

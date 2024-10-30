@@ -66,6 +66,16 @@ class DetteController extends AbstractController
             'formDette' => $form->createView(),
         ]);
     }
+    /**
+     * @Route("/dettes/{id}", name="dettes.getDetteByClient")
+     */
+
+    public function getDetteByClient(int $id, ClientRepository $clientRepository): Response
+    {
+        $client = $clientRepository->find($id);
+        dd($client);
+        return $this->render('dette/index.html.twig',[]);
+    }
 
     
 }

@@ -1,0 +1,164 @@
+{# <h1>Détails du client {{ client.surname }}</h1>
+
+<h2>Dettes soldées</h2>
+<ul>
+    {% for dette in dettesSoldees %}
+        <li>Montant: {{ dette.montant }} - Montant versé: {{ dette.montantVerser }}</li>
+    {% else %}
+        <li>Aucune dette soldée.</li>
+    {% endfor %}
+</ul>
+
+<h2>Dettes non soldées</h2>
+<ul>
+    {% for dette in dettesNonSoldees %}
+        <li>Montant: {{ dette.montant }} - Montant versé: {{ dette.montantVerser }}</li>
+    {% else %}
+        <li>Aucune dette non soldée.</li>
+    {% endfor %}
+</ul> #}
+{% extends "base.html.twig" %}
+
+{% block main %}
+    <div class="flex justify-center ">
+               <div class="card-body my-4 justify-center w-100 ">
+                <a href="#" class="block max-w-sm p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100 dark:bg-gray-800 dark:border-gray-700 dark:hover:bg-gray-700">
+
+                <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900 dark:text-white">Information Client </h5>
+                <div>
+                    <p>Surname : {{client.surname}} </p>
+                    {% if client.users %}
+                        <p>Prenom :  {{client.telephon}} </p>
+                        {# <p>Nom :  {{client.compte.surname}} </p>
+                        <p>telephone :  {{client.compte.telephon}} </p> #}
+                        {% else %}
+                            <p>No compte</p>
+                    
+                    {% endif %}
+                    <p>Montant Total Du :</p>
+
+
+                </div>
+                </a>
+                </div>
+     </div>               
+
+    <div class="flex">
+        <aside class="w-1/4 bg-gray-800 text-white p-4">
+            <ul>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dashboard</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Dettes</a></li>
+                <li class="mb-4"><a href="{{ path('clients.index') }}" class="block p-2 hover:bg-gray-700">Clients</a></li>
+                <li class="mb-4"><a href="{{ path('articles.index') }}" class="block p-2 hover:bg-gray-700">Articles</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Demandes</a></li>
+                <li class="mb-4"><a href="#" class="block p-2 hover:bg-gray-700">Utilisateurs</a></li>
+            </ul>
+        </aside>
+                
+
+
+
+
+        <div class="w-3/4 bg-white p-4 rounded shadow-md">
+            <h2 class="text-lg font-bold mb-4">Lister Clients</h2>
+        <div class="" 
+            <!-- Section de filtre -->
+     
+
+                {# <form action="{{ path('clients.search') }}" method="get">
+                    <input type="text" name="tel" placeholder="Filtrer par Téléphone" class="p-2 border border-gray-300 rounded mr-2">
+                    <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
+                </form>
+                <form action="" method="get">
+                 <a href="{{path('clients.store')}}"   <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">Nouveau</button></a>
+                </form> #}
+                
+                {{form_start(formSearch, {'method ':'get'})}}
+                <div class='mb- 2 text-danger'>
+                      {{form_errors(formSearch.status)}}
+                </div>
+                <div class='d-flex my-2 my-lg-0 col-5'>
+                        {{form_widget(formSearch.status, {'attr':{
+                            'class':'p-2 border border-gray-300 rounded mr-2'
+                        }})}}
+                        {{form_widget(formSearch.Search)}}
+
+                    
+                </div>
+                  {{form_end(formSearch)}}
+                
+            </div>
+
+            <!-- Tableau des clients -->
+            <table class="w-full bg-white shadow-md rounded">
+                <thead class="bg-gray-200">
+                    <tr>
+                        <th class="p-2 text-left">DATE</th>
+                        <th class="p-2 text-left">MONTANT</th>
+                        <th class="p-2 text-left">MONTANT VERSER</th>
+                        <th class="p-2 text-left">MONTANT RESTANT</th>
+                        <th class="p-2 text-left">STATUS</th>
+
+                        <th class="p-2 text-left">Action</th>
+
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for dette in dettes %}
+                        <tr class="border-b">
+                            <td class="p-2">
+                            {{dette.createAt |date("d/m/Y")}}
+                            </td>
+                            <td class="p-2">
+                            {{ dette.montant }}
+                            </td>
+                            <td class="p-2">
+                            {{ dette.montantVerser }}
+                            </td>
+                            <td class="p-2">
+                            {{ dette.getMontantRestant()}}
+                            </td>
+                            <td class="p-2">
+                            {{ dette.status.name|default('Statut non défini') }}
+                            </td>
+                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Articles</button></td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="4" class="p-2 text-center">Aucun client trouvé</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+
+            <!-- Pagination -->
+	<nav aria-label="Page navigation" class="d-flex justify-content-end">
+						<ul class="pagination    ">
+							<li class="page-item">
+								{% if page > 1 %}
+									<a class="page-link" href="?page={{page - 1}}&status={{status}}" aria-label="Previous">
+										<span aria-hidden="true">&laquo;</span>
+									</a>
+								{% endif %}
+							</li>
+							{% for i in 1..maxPage %}
+								<li class="page-item {{ i == page ? 'active' : '' }}" aria-current="page">
+									<a class="page-link" href="?page={{i}}&status={{status}}">
+										{{ i }}
+									</a>
+								</li>
+							{% endfor %}
+
+							<li class="page-item">
+								{% if page < maxPage %}
+									<a class="page-link" href="?page={{page + 1}}&status={{status}}" aria-label="Next">
+										<span aria-hidden="true">&raquo;</span>
+									</a>
+								{% endif %}
+							</li>
+						</ul>
+					</nav>
+
+        </div>
+    </div>
+{% endblock %}

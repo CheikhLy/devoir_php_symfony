@@ -5,6 +5,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
+use App\DTO\ClientSearchDto;
 
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
@@ -25,14 +26,18 @@ class SearchClientType extends AbstractType
                 // 'class' => 'text-danger' // Ajouté ici
             ],
             'constraints' => [
-                new NotBlank([
-                    'message' => 'Saisissez votre numéro de telephone',
-                ]),
                 new Regex([
                     'pattern'=> '/^([77|78|76])([0-9]{7})$/'
                 ])
             ]
         ]) 
+        ->add('surname', TextType::class, [
+            'required' => false,
+            'attr' => [
+                'placeholder' => 'Surname',
+                // 'pattern' => '^[a-zA-Z]+$'
+            ]
+        ])
         ->add('Search',SubmitType::class,[
             'attr' => [
                 'class' => 'bg-blue-600 text-white px-4 py-2 rounded'
@@ -44,7 +49,7 @@ class SearchClientType extends AbstractType
     public function configureOptions(OptionsResolver $resolver): void
     {
         $resolver->setDefaults([
-            // Configure your form options here
+           'data_class' => ClientSearchDto::class,
         ]);
     }
 }

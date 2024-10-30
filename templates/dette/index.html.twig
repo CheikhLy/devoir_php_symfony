@@ -47,12 +47,12 @@
                     <td>{{ dette.id }}</td>
                     <td>{{ dette.montant }}</td>
                     <td>{{ dette.montantVerser }}</td>
-                    <td>{{ dette.client.nom }}</td>
+                    <td>{{ dette.client.surname }}</td>
                     <td>{{ dette.createAt|date('Y-m-d H:i') }}</td>
                     <td>
-                        <a href="{{ path('dettes.show', {id: dette.id}) }}">Voir</a>
-                        <a href="{{ path('dettes.edit', {id: dette.id}) }}">Modifier</a>
-                        <a href="{{ path('dettes.delete', {id: dette.id}) }}">Supprimer</a>
+                        {# <a href="{{ path('dettes.show', {id: dette.id}) }}">Voir</a> #}
+                        {# <a href="{{ path('dettes.edit', {id: dette.id}) }}">Modifier</a> #}
+                        {# <a href="{{ path('dettes.delete', {id: dette.id}) }}">Supprimer</a> #}
                     </td>
                 </tr>
             {% else %}

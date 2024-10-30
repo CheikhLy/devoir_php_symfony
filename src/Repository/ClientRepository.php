@@ -1,7 +1,7 @@
 <?php
 
 namespace App\Repository;
-
+use Doctrine\ORM\Tools\Pagination\Paginator;
 use App\Entity\Client;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
@@ -29,6 +29,23 @@ class ClientRepository extends ServiceEntityRepository
             $this->getEntityManager()->flush();
         }
     }
+    public function paginateClients(int $page, int $limit): Paginator
+    {
+
+        $query = $this->createQueryBuilder('c')
+            ->setFirstResult(($page - 1) * $limit)
+            ->setMaxResults($limit)
+            ->orderBy('c.id', 'ASC')
+            ->getQuery();
+        return new Paginator($query);
+    }
+    public function countAllClients(): int
+    {
+        return (int) $this->createQueryBuilder('c')
+            ->select('COUNT(c.id)')
+            ->getQuery()
+            ->getSingleScalarResult();
+    }
 
     public function remove(Client $entity, bool $flush = false): void
     {
@@ -39,20 +56,49 @@ class ClientRepository extends ServiceEntityRepository
         }
     }
 
-//    /**
-//     * @return Client[] Returns an array of Client objects
-//     */
-//    public function findByExampleField($value): array
-//    {
-//        return $this->createQueryBuilder('c')
-//            ->andWhere('c.exampleField = :val')
-//            ->setParameter('val', $value)
-//            ->orderBy('c.id', 'ASC')
-//            ->setMaxResults(10)
-//            ->getQuery()
-//            ->getResult()
-//        ;
-//    }
+   /**
+    * @return Client[] Returns an array of Client objects
+    */
+   public function findClinetBy(ClientSearchDto $clientSearchDto,int $page, int $limit): Paginator
+   {
+       $query= $this->createQueryBuilder('c');
+       if(!empty($clientSearchDto->telephon)){
+           $query->andWhere('c.telephon = :telephon')
+               ->setParameter('telephon', $clientSearchDto->telephon);
+       }
+
+       if(!empty($clientSearchDto->surname)){
+           $query->andWhere('c.surname = :surname')
+               ->setParameter('surname', $clientSearchDto->surname);
+       }
+
+        $query->orderBy('c.id', 'ASC')
+           ->setFirstResult(($page - 1) * $limit)
+           ->setMaxResults($limit)
+           ->getQuery();
+       return new Paginator($query);
+    }  
+
+    public function findDetteByClient(int $idClient, StatusDette $status= StatusDette::PAYE) {
+        $query = $this->createQueryBuilder('c');
+        $query->join('c.dettes', 'd');
+        $query->where('c.id = :idClient');
+        $query->setParameter('idClient', $idClient);
+        if ($status->value == StatusDette::IMPAYE->value) {
+            // dd($status->value == StatusDette::Impaye->value);
+            $query->andWhere('d.montant != d.montantVerser');
+        }
+        if ($status->value == StatusDette::PAYE->value) {
+            $query->andWhere('d.montant = d.montantVerser');
+        }
+
+        return $query->orderBy('d.createAt', 'DESC')
+            ->getQuery()
+            ->getSingleResult();
+
+
+    }
+
 
 //    public function findOneBySomeField($value): ?Client
 //    {

@@ -2,8 +2,10 @@
 
 namespace App\Entity;
 
+use App\enum\StatusDette;
 use App\Repository\DetteRepository;
 use Doctrine\ORM\Mapping as ORM;
+
 
 #[ORM\Entity(repositoryClass: DetteRepository::class)]
 class Dette
@@ -17,7 +19,7 @@ class Dette
     private $montant;
 
     #[ORM\Column(type: 'float')]
-    private $montantVerser;
+    private $montantVerser=0;
 
     #[ORM\Column(type: 'datetime_immutable')]
     private $createAt;
@@ -29,11 +31,23 @@ class Dette
     #[ORM\JoinColumn(nullable: false)]
     private $client;
 
+    // private float $montantRestant=null
+    
+    private StatusDette $status = StatusDette::IMPAYE;
+    
     public function __construct()
     {
         $this->creatAt = new \DateTimeImmutable();
         $this->updateAt = new \DateTimeImmutable();
         
+    }
+    public function getStatus(): StatusDette
+    {
+        if ($this->montantVerser != 0 && $this->montantVerser == $this->montant) {
+            $this->status = StatusDette::PAYE;
+        }
+                  
+        return $this->status;
     }
     public function isSoldee(): bool
     {
@@ -44,6 +58,12 @@ class Dette
     {
         return $this->id;
     }
+    public function getmontantRestant(): ?int
+    {
+        return $this->montant - $this->montantVerser;
+    }
+
+
 
     public function getMontant(): ?float
     {
@@ -61,6 +81,16 @@ class Dette
     {
         return $this->montantVerser;
     }
+    //  public function setStatus(string $status): self
+    // {
+    //     // Valider que le statut est bien défini dans StatusDette
+    //     if (!in_array($status, [StatusDette::PAYE, StatusDette::IMPAYE])) {
+    //         throw new \InvalidArgumentException("Statut invalide pour Dette");
+    //     }
+
+    //     $this->status = $status;
+    //     return $this;
+    // }
 
     public function setMontantVerser(float $montantVerser): self
     {

@@ -15,9 +15,12 @@
 
         <div class="w-3/4 bg-white p-4 rounded shadow-md">
             <h2 class="text-lg font-bold mb-4">Lister Clients</h2>
-
+        <div class="" 
             <!-- Section de filtre -->
-            <div class="mb-4">
+        <div class="mb-4  align-left">
+            <a href="{{ path('clients.store') }}" class="bg-blue-600 text-white px-4 py-2 rounded">Nouveau</a>
+        </div>
+
                 {# <form action="{{ path('clients.search') }}" method="get">
                     <input type="text" name="tel" placeholder="Filtrer par Téléphone" class="p-2 border border-gray-300 rounded mr-2">
                     <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded">OK</button>
@@ -34,7 +37,13 @@
                         {{form_widget(formSearch.telephon, {'attr':{
                             'class':'p-2 border border-gray-300 rounded mr-2'
                         }})}}
+
+                         {{form_widget(formSearch.surname, {'attr':{
+                            'class':'p-2 border border-gray-300 rounded mr-2'
+                        }})}}
                         {{form_widget(formSearch.Search)}}
+
+                    
                 </div>
                   {{form_end(formSearch)}}
                 
@@ -56,7 +65,10 @@
                             <td class="p-2">{{ client.surname }}</td>
                             <td class="p-2">{{ client.telephon }}</td>
                             <td class="p-2">{{ client.address }}</td>
-                            <td class="p-2"><button class="bg-blue-600 text-white px-4 py-2 rounded">Détails</button></td>
+                            <td class="p-2"><a href="{{ path('clients.store') }}" class="bg-blue-600 text-white px-4 py-2 rounded">Nouveau</a>
+                            <a href="{{ path('clients.show', {idClient: client.id }) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Dette</a></td>
+                            {# <td class="p-2"><a href="{{ path('clients.show', {idClient: client.id }) }}" class="bg-blue-600 text-white px-4 py-2 rounded">Dette</a></td> #}
+
                         </tr>
                     {% else %}
                         <tr>
@@ -67,21 +79,21 @@
             </table>
 
             <!-- Pagination -->
-            <div class="flex justify-end mt-4">
-                {% if currentPage > 1 %}
-                    <a href="{{ path('clients.index', { page: currentPage - 1 }) }}" class="bg-gray-200 text-black px-3 py-1 rounded mr-2">&lt;</a>
+            <div class="flex justify-end mt-6">
+                {% if page > 1 %}
+                    <a href="{{ path('clients.index', { page: page - 1 }) }}" class="bg-gray-200 text-black px-3 py-1 rounded mr-2">&lt;</a>
                 {% endif %}
                 
-                {% for page in 1..totalPages %}
-                    {% if page == currentPage %}
+                {% for page in 1..maxPage %}
+                    {% if page == page %}
                         <span class="bg-gray-800 text-white px-3 py-1 rounded">{{ page }}</span>
                     {% else %}
-                        <a href="{{ path('clients.index', { page: page }) }}" class="bg-gray-200 text-black px-3 py-1 rounded">{{ page }}</a>
+                        <a href="{{ path('clients.index', { page: page }) }}" class="bg-gray-200 text-black px-3 py-1 rounded ">{{ page }}</a>
                     {% endif %}
                 {% endfor %}
                 
-                {% if currentPage < totalPages %}
-                    <a href="{{ path('clients.index', { page: currentPage + 1 }) }}" class="bg-gray-200 text-black px-3 py-1 rounded ml-2">&gt;</a>
+                {% if page < maxPage %}
+                    <a href="{{ path('clients.index', { page: page + 1 }) }}" class="bg-gray-200 text-black px-3 py-1 rounded ml-2">&gt;</a>
                 {% endif %}
             </div>
         </div>

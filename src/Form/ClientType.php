@@ -10,6 +10,7 @@ use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\Extension\Core\Type\SubmitType;
 use Symfony\Component\Form\Extension\Core\Type\HiddenType;
 use Symfony\Component\Validator\Constraints\NotNull;
+use Symfony\Component\Form\Extension\Core\Type\CheckboxType;
 use Symfony\Component\Validator\Constraints\NotBlank;
 use Symfony\Component\Validator\Constraints\Regex;
 
@@ -21,6 +22,7 @@ class ClientType extends AbstractType
             ->add('id', HiddenType::class)
             ->add('surname', TextType::class, [
                 'required' => false,
+                'empty_data' => '',
                 'attr' => [
                     // 'placeholder' => 'Nom',
                     // 'pattern' => '^[a-zA-Z]+$'
@@ -36,6 +38,7 @@ class ClientType extends AbstractType
             ])
             ->add('telephon', TextType::class, [
                 'required' => false,
+                'empty_data' => '',
                 'attr' => [
                     'placeholder' => 'Telephone',
                     // 'pattern' => '^([77|78|76])[0-9]{7}$',
@@ -67,8 +70,26 @@ class ClientType extends AbstractType
                     new NotBlank([
                         'message' => 'Le champ ne peut pas être vide',
                     ]),
+                ],
+            ])
+            ->add('addUser', CheckboxType::class, [
+                'label' => 'Ajouter un compte ?',
+                'required' => false,
+                'data' => false,
+                'mapped' => false,
+
+                'attr' => [
+                    'class' => 'form-check-input',
                 ]
-            ]);
+            ])
+            ->add('users', UserType::class, [
+                'label'=> false,
+                'attr' => [
+                    'class' => 'hidden',
+                ],
+                ])
+
+            ->add('Save', SubmitType::class);
     }
 
     public function configureOptions(OptionsResolver $resolver): void
